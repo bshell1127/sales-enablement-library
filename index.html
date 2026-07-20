@@ -81,29 +81,29 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <h2>Library</h2>
 <p class="sub">Search everything across Marketing and Promos by keyword or tag.</p>
 <div class="search-wrap">
-<input type="text" id="search" class="search-box" placeholder="Search or pick a tag (e.g. sales sheets, mighty, lube, parts)&hellip;" autocomplete="off">
+<input type="text" id="search" class="search-box" placeholder="Search or pick a tag (e.g. sales sheets, mighty, lube)&hellip;" autocomplete="off">
 <div class="tag-row" id="tag-row"></div>
 </div>
 <div class="grid" id="library-grid">
-<a class="card lib-card" href="Competitive_Dashboard.html" data-tags="cos, lube, parts, intel, pricing, marketing">
+<a class="card lib-card" href="Competitive_Dashboard.html" data-tags="cos, lube, intel, pricing">
 <h3>Competitive Dashboard</h3>
 <p>Live competitive intelligence and pricing comparison.</p>
-<div class="card-tags"><span class="card-tag">cos</span><span class="card-tag">lube</span><span class="card-tag">parts</span><span class="card-tag">intel</span></div>
+<div class="card-tags"><span class="card-tag">COS</span><span class="card-tag">lube</span><span class="card-tag">intel</span></div>
 </a>
-<a class="card lib-card" href="July August Mighty Triple Play.pdf" data-tags="mighty, parts, promo">
+<a class="card lib-card" href="July August Mighty Triple Play.pdf" data-tags="mighty, promo">
 <h3>Mighty Triple Play (July&ndash;August)</h3>
 <p>July&ndash;August Mighty Triple Play promotion flyer.</p>
-<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">parts</span><span class="card-tag">promo</span></div>
+<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">promo</span></div>
 </a>
-<a class="card lib-card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="mighty, parts, tools, promo">
+<a class="card lib-card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="mighty, tools, promo">
 <h3>Q3 ToolWeb Flyer</h3>
 <p>Q3 ToolWeb promotional flyer.</p>
-<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">parts</span><span class="card-tag">tools</span><span class="card-tag">promo</span></div>
+<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">tools</span><span class="card-tag">promo</span></div>
 </a>
 <a class="card lib-card" href="Sales%20Sheet%20(Loggers).pdf" data-tags="sales sheets, cos, lube, loggers">
 <h3>Sales Sheet &ndash; Loggers</h3>
 <p>Product sales sheet for the logging segment.</p>
-<div class="card-tags"><span class="card-tag">sales sheets</span><span class="card-tag">cos</span><span class="card-tag">lube</span><span class="card-tag">loggers</span></div>
+<div class="card-tags"><span class="card-tag">sales sheets</span><span class="card-tag">COS</span><span class="card-tag">lube</span><span class="card-tag">loggers</span></div>
 </a>
 </div>
 <div class="no-results" id="no-results">No matches. Try a different tag or search term.</div>
@@ -111,6 +111,8 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 </main>
 <footer>Central Oil & Supply &middot; Internal use only &middot; Proprietary</footer>
 <script>
+var UP={cos:"COS"};
+function disp(t){return UP[t]||t;}
 var tabs=document.querySelectorAll("nav a[data-tab]");
 tabs.forEach(function(a){
 a.addEventListener("click",function(e){
@@ -130,7 +132,7 @@ var activeTags={};
 tagList.sort();
 tagList.forEach(function(t){
 var b=document.createElement("span");
-b.className="tag";b.textContent=t;b.setAttribute("data-tag",t);
+b.className="tag";b.textContent=disp(t);b.setAttribute("data-tag",t);
 b.addEventListener("click",function(){
 if(activeTags[t]){delete activeTags[t];b.classList.remove("active");}
 else{activeTags[t]=true;b.classList.add("active");}
