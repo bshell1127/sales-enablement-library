@@ -21,7 +21,7 @@ main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
 .search-box:focus{outline:none;border-color:var(--cos-red);}
 .search-box::placeholder{color:#aaa;}
 .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
-.tag{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#fff;color:var(--gray);border:2px solid var(--line);cursor:pointer;transition:all .15s ease;}
+.tag{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#fff;color:var(--gray);border:2px solid var(--line);cursor:pointer;transition:all .15s ease;text-transform:capitalize;}
 .tag:hover{border-color:var(--cos-red);color:var(--cos-red);}
 .tag.active{background:var(--cos-red);color:#fff;border-color:var(--cos-red);}
 .panel{display:none;}
@@ -35,7 +35,7 @@ main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
 .card h3{font-size:1.15rem;margin-bottom:8px;color:var(--cos-red);}
 .card p{color:var(--gray);font-size:.9rem;}
 .card-tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;}
-.card-tag{font-size:.72rem;font-weight:600;color:#8a8a8a;background:#f0f0f0;padding:2px 8px;border-radius:10px;}
+.card-tag{font-size:.72rem;font-weight:600;color:#8a8a8a;background:#f0f0f0;padding:2px 8px;border-radius:10px;text-transform:capitalize;}
 .empty{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:50px 20px;text-align:center;color:var(--gray);}
 .no-results{display:none;background:#fff;border:2px dashed var(--line);border-radius:12px;padding:40px 20px;text-align:center;color:var(--gray);margin-top:10px;}
 footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;border-top:1px solid var(--line);}
@@ -81,24 +81,29 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <h2>Library</h2>
 <p class="sub">Search everything across Marketing and Promos by keyword or tag.</p>
 <div class="search-wrap">
-<input type="text" id="search" class="search-box" placeholder="Search or tag (e.g. #mighty, #cos, #lube, #parts)&hellip;" autocomplete="off">
+<input type="text" id="search" class="search-box" placeholder="Search or pick a tag (e.g. sales sheets, mighty, lube, parts)&hellip;" autocomplete="off">
 <div class="tag-row" id="tag-row"></div>
 </div>
 <div class="grid" id="library-grid">
-<a class="card lib-card" href="Competitive_Dashboard.html" data-tags="#cos #lube #parts #intel #pricing #marketing">
+<a class="card lib-card" href="Competitive_Dashboard.html" data-tags="cos, lube, parts, intel, pricing, marketing">
 <h3>Competitive Dashboard</h3>
 <p>Live competitive intelligence and pricing comparison.</p>
-<div class="card-tags"><span class="card-tag">#cos</span><span class="card-tag">#lube</span><span class="card-tag">#parts</span><span class="card-tag">#intel</span></div>
+<div class="card-tags"><span class="card-tag">cos</span><span class="card-tag">lube</span><span class="card-tag">parts</span><span class="card-tag">intel</span></div>
 </a>
-<a class="card lib-card" href="July August Mighty Triple Play.pdf" data-tags="#mighty #parts #promo">
+<a class="card lib-card" href="July August Mighty Triple Play.pdf" data-tags="mighty, parts, promo">
 <h3>Mighty Triple Play (July&ndash;August)</h3>
 <p>July&ndash;August Mighty Triple Play promotion flyer.</p>
-<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#promo</span></div>
+<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">parts</span><span class="card-tag">promo</span></div>
 </a>
-<a class="card lib-card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="#mighty #parts #tools #promo">
+<a class="card lib-card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="mighty, parts, tools, promo">
 <h3>Q3 ToolWeb Flyer</h3>
 <p>Q3 ToolWeb promotional flyer.</p>
-<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#tools</span><span class="card-tag">#promo</span></div>
+<div class="card-tags"><span class="card-tag">mighty</span><span class="card-tag">parts</span><span class="card-tag">tools</span><span class="card-tag">promo</span></div>
+</a>
+<a class="card lib-card" href="Sales%20Sheet%20(Loggers).pdf" data-tags="sales sheets, cos, lube, loggers">
+<h3>Sales Sheet &ndash; Loggers</h3>
+<p>Product sales sheet for the logging segment.</p>
+<div class="card-tags"><span class="card-tag">sales sheets</span><span class="card-tag">cos</span><span class="card-tag">lube</span><span class="card-tag">loggers</span></div>
 </a>
 </div>
 <div class="no-results" id="no-results">No matches. Try a different tag or search term.</div>
@@ -118,12 +123,12 @@ document.getElementById(tab).classList.add("show");
 });
 });
 var cards=Array.prototype.slice.call(document.querySelectorAll(".lib-card"));
-var tagSet={};
-cards.forEach(function(c){(c.getAttribute("data-tags")||"").split(/\s+/).forEach(function(t){if(t){tagSet[t.toLowerCase()]=true;}});});
-var allTags=Object.keys(tagSet).sort();
+var tagList=[];
+cards.forEach(function(c){(c.getAttribute("data-tags")||"").split(",").forEach(function(t){var v=t.trim().toLowerCase();if(v&&tagList.indexOf(v)===-1){tagList.push(v);}});});
 var tagRow=document.getElementById("tag-row");
 var activeTags={};
-allTags.forEach(function(t){
+tagList.sort();
+tagList.forEach(function(t){
 var b=document.createElement("span");
 b.className="tag";b.textContent=t;b.setAttribute("data-tag",t);
 b.addEventListener("click",function(){
