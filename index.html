@@ -12,7 +12,7 @@ header{background:#111;padding:18px 20px;text-align:center;border-bottom:4px sol
 header img{height:54px;width:auto;}
 .tagline{color:#bbb;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-top:8px;}
 nav{background:#fff;display:flex;justify-content:center;gap:0;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.05);}
-nav a{flex:1;max-width:220px;text-align:center;padding:16px 10px;font-weight:700;font-size:1rem;color:var(--ink);text-decoration:none;text-transform:uppercase;letter-spacing:.5px;border-bottom:4px solid transparent;transition:all .15s ease;}
+nav a{flex:1;max-width:220px;text-align:center;padding:16px 10px;font-weight:700;font-size:1rem;color:var(--ink);text-decoration:none;text-transform:uppercase;letter-spacing:.5px;border-bottom:4px solid transparent;transition:all .15s ease;cursor:pointer;}
 nav a:hover{color:var(--cos-red);background:#fafafa;}
 nav a.active{color:var(--cos-red);border-bottom-color:var(--cos-red);}
 main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
@@ -35,19 +35,12 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <div class="tagline">Sales Enablement Hub</div>
 </header>
 <nav>
-<a href="#" data-tab="market" class="active">Market Intel</a>
-<a href="#" data-tab="promos">Promos</a>
-<a href="#" data-tab="library">Library</a>
+<a href="Competitive_Dashboard.html">Market Intel</a>
+<a data-tab="promos" class="active">Promos</a>
+<a data-tab="library">Library</a>
 </nav>
 <main>
-<section id="market" class="panel show">
-<h2>Market Intel</h2>
-<p class="sub">Competitive dashboard and market intelligence.</p>
-<div class="grid" id="market-grid">
-<div class="empty">Competitive dashboard coming here.</div>
-</div>
-</section>
-<section id="promos" class="panel">
+<section id="promos" class="panel show">
 <h2>Promos</h2>
 <p class="sub">Current promotions and campaign materials.</p>
 <div class="grid" id="promos-grid">
@@ -64,11 +57,11 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 </main>
 <footer>Central Oil & Supply &middot; Internal use only &middot; Proprietary</footer>
 <script>
-document.querySelectorAll('nav a').forEach(function(a){
+document.querySelectorAll('nav a[data-tab]').forEach(function(a){
 a.addEventListener('click',function(e){
 e.preventDefault();
 var tab=this.getAttribute('data-tab');
-document.querySelectorAll('nav a').forEach(function(x){x.classList.remove('active');});
+document.querySelectorAll('nav a[data-tab]').forEach(function(x){x.classList.remove('active');});
 this.classList.add('active');
 document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('show');});
 document.getElementById(tab).classList.add('show');
