@@ -8,9 +8,9 @@
 :root{--cos-red:#D73325;--cos-red2:#EA130E;--ink:#1a1a1a;--gray:#6b6b6b;--line:#e4e4e4;--bg:#f5f5f5;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;}
-header{background:#111;padding:18px 20px;text-align:center;border-bottom:4px solid var(--cos-red);}
-header img{height:54px;width:auto;}
-.tagline{color:#bbb;font-size:.8rem;letter-spacing:1px;text-transform:uppercase;margin-top:8px;}
+header{background:#111;padding:24px 34px;border-bottom:4px solid var(--cos-red);display:flex;align-items:center;gap:34px;flex-wrap:wrap;}
+header img{height:104px;width:auto;background:#fff;border-radius:10px;padding:12px 18px;box-shadow:0 2px 10px rgba(0,0,0,.35);}
+.hub{color:#fff;font-size:2.5rem;font-weight:800;letter-spacing:.5px;line-height:1.05;}
 nav{background:#fff;display:flex;justify-content:center;gap:0;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;box-shadow:0 2px 6px rgba(0,0,0,.05);}
 nav a{flex:1;max-width:220px;text-align:center;padding:16px 10px;font-weight:700;font-size:1rem;color:var(--ink);text-decoration:none;text-transform:uppercase;letter-spacing:.5px;border-bottom:4px solid transparent;transition:all .15s ease;cursor:pointer;}
 nav a:hover{color:var(--cos-red);background:#fafafa;}
@@ -27,12 +27,13 @@ main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
 .card p{color:var(--gray);font-size:.9rem;}
 .empty{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:50px 20px;text-align:center;color:var(--gray);}
 footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;border-top:1px solid var(--line);}
+@media (max-width:600px){header{gap:16px;padding:18px 20px;}header img{height:74px;}.hub{font-size:1.6rem;}}
 </style>
 </head>
 <body>
 <header>
-<img src="https://central-oil.com/wp-content/uploads/2021/03/cos-logo.png" alt="Central Oil & Supply">
-<div class="tagline">Sales Enablement Hub</div>
+<img src="COS%20Mighty%20One%20Partner%20Logo.jpg" alt="Central Oil & Supply | Mighty Auto Parts">
+<div class="hub">Sales Enablement Hub</div>
 </header>
 <nav>
 <a data-tab="market" class="active">Marketing</a>
