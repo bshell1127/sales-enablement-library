@@ -16,16 +16,33 @@ nav a{flex:1;max-width:220px;text-align:center;padding:16px 10px;font-weight:700
 nav a:hover{color:var(--cos-red);background:#fafafa;}
 nav a.active{color:var(--cos-red);border-bottom-color:var(--cos-red);}
 main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
+.search-wrap{margin-bottom:26px;}
+.search-box{width:100%;padding:14px 18px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:1rem;color:var(--ink);transition:border-color .15s ease;}
+.search-box:focus{outline:none;border-color:var(--cos-red);}
+.search-box::placeholder{color:#aaa;}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.tag{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#fff;color:var(--gray);border:2px solid var(--line);cursor:pointer;transition:all .15s ease;}
+.tag:hover{border-color:var(--cos-red);color:var(--cos-red);}
+.tag.active{background:var(--cos-red);color:#fff;border-color:var(--cos-red);}
+.tag-clear{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#eee;color:var(--gray);border:2px solid transparent;cursor:pointer;}
+.tag-clear:hover{background:#e0e0e0;}
 .panel{display:none;}
 .panel.show{display:block;}
+body.filtering .panel{display:block;}
 .panel h2{font-size:1.5rem;margin-bottom:6px;}
 .panel .sub{color:var(--gray);margin-bottom:22px;font-size:.95rem;}
+body.filtering .panel .sub{display:none;}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
 .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;text-decoration:none;color:inherit;display:block;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;}
 .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.08);border-color:var(--cos-red);}
+.card.hide{display:none;}
 .card h3{font-size:1.15rem;margin-bottom:8px;color:var(--cos-red);}
 .card p{color:var(--gray);font-size:.9rem;}
+.card-tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;}
+.card-tag{font-size:.72rem;font-weight:600;color:#8a8a8a;background:#f0f0f0;padding:2px 8px;border-radius:10px;}
 .empty{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:50px 20px;text-align:center;color:var(--gray);}
+.no-results{display:none;background:#fff;border:2px dashed var(--line);border-radius:12px;padding:40px 20px;text-align:center;color:var(--gray);margin-top:10px;}
+.section-hidden{display:none !important;}
 footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;border-top:1px solid var(--line);}
 @media (max-width:600px){header{gap:14px;padding:14px 20px;}header img{width:100%;max-width:280px;}.hub{font-size:1.5rem;}}
 </style>
@@ -41,13 +58,19 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <a data-tab="library">Library</a>
 </nav>
 <main>
+<div class="search-wrap">
+<input type="text" id="search" class="search-box" placeholder="Search or tag (e.g. #mighty, #cos, #lube, #parts)&hellip;" autocomplete="off">
+<div class="tag-row" id="tag-row"></div>
+</div>
+<div class="no-results" id="no-results">No matches. Try a different tag or search term.</div>
 <section id="market" class="panel show">
 <h2>Marketing</h2>
 <p class="sub">Marketing materials and resources.</p>
 <div class="grid" id="market-grid">
-<a class="card" href="Competitive_Dashboard.html">
+<a class="card" href="Competitive_Dashboard.html" data-tags="#cos #lube #parts #intel #pricing">
 <h3>Competitive Dashboard</h3>
 <p>Live competitive intelligence and pricing comparison.</p>
+<div class="card-tags"><span class="card-tag">#cos</span><span class="card-tag">#lube</span><span class="card-tag">#parts</span><span class="card-tag">#intel</span></div>
 </a>
 </div>
 </section>
@@ -55,13 +78,15 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <h2>Promos</h2>
 <p class="sub">Current promotions and campaign materials.</p>
 <div class="grid" id="promos-grid">
-<a class="card" href="July August Mighty Triple Play.pdf">
+<a class="card" href="July August Mighty Triple Play.pdf" data-tags="#mighty #parts #promo">
 <h3>Mighty Triple Play (July&ndash;August)</h3>
 <p>July&ndash;August Mighty Triple Play promotion flyer.</p>
+<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#promo</span></div>
 </a>
-<a class="card" href="Q3 ToolWeb Flyer (1).pdf">
+<a class="card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="#mighty #parts #tools #promo">
 <h3>Q3 ToolWeb Flyer</h3>
 <p>Q3 ToolWeb promotional flyer.</p>
+<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#tools</span><span class="card-tag">#promo</span></div>
 </a>
 </div>
 </section>
@@ -75,16 +100,58 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 </main>
 <footer>Central Oil & Supply &middot; Internal use only &middot; Proprietary</footer>
 <script>
-document.querySelectorAll('nav a[data-tab]').forEach(function(a){
-a.addEventListener('click',function(e){
+var tabs=document.querySelectorAll("nav a[data-tab]");
+tabs.forEach(function(a){
+a.addEventListener("click",function(e){
 e.preventDefault();
-var tab=this.getAttribute('data-tab');
-document.querySelectorAll('nav a[data-tab]').forEach(function(x){x.classList.remove('active');});
-this.classList.add('active');
-document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('show');});
-document.getElementById(tab).classList.add('show');
+var tab=this.getAttribute("data-tab");
+tabs.forEach(function(x){x.classList.remove("active");});
+this.classList.add("active");
+document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("show");});
+document.getElementById(tab).classList.add("show");
 });
 });
+var cards=Array.prototype.slice.call(document.querySelectorAll(".card"));
+var tagSet={};
+cards.forEach(function(c){(c.getAttribute("data-tags")||"").split(/\s+/).forEach(function(t){if(t){tagSet[t.toLowerCase()]=true;}});});
+var allTags=Object.keys(tagSet).sort();
+var tagRow=document.getElementById("tag-row");
+var activeTags={};
+allTags.forEach(function(t){
+var b=document.createElement("span");
+b.className="tag";b.textContent=t;b.setAttribute("data-tag",t);
+b.addEventListener("click",function(){
+if(activeTags[t]){delete activeTags[t];b.classList.remove("active");}
+else{activeTags[t]=true;b.classList.add("active");}
+applyFilter();
+});
+tagRow.appendChild(b);
+});
+var searchInput=document.getElementById("search");
+searchInput.addEventListener("input",applyFilter);
+var noResults=document.getElementById("no-results");
+function applyFilter(){
+var q=searchInput.value.trim().toLowerCase();
+var tagKeys=Object.keys(activeTags);
+var filtering=(q.length>0)||(tagKeys.length>0);
+document.body.classList.toggle("filtering",filtering);
+var anyVisible=false;
+cards.forEach(function(c){
+var tagsStr=(c.getAttribute("data-tags")||"").toLowerCase();
+var text=c.textContent.toLowerCase();
+var matchText=!q||text.indexOf(q)!==-1||tagsStr.indexOf(q)!==-1;
+var matchTags=tagKeys.every(function(t){return tagsStr.indexOf(t)!==-1;});
+var show=matchText&&matchTags;
+c.classList.toggle("hide",!show);
+if(show){anyVisible=true;}
+});
+document.querySelectorAll("main section.panel").forEach(function(sec){
+if(!filtering){sec.classList.remove("section-hidden");return;}
+var vis=sec.querySelectorAll(".card:not(.hide)").length;
+sec.classList.toggle("section-hidden",vis===0);
+});
+noResults.style.display=(filtering&&!anyVisible)?"block":"none";
+}
 </script>
 </body>
 </html>
