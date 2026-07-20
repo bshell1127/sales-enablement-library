@@ -35,12 +35,22 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <div class="tagline">Sales Enablement Hub</div>
 </header>
 <nav>
-<a href="Competitive_Dashboard.html">Market Intel</a>
-<a data-tab="promos" class="active">Promos</a>
+<a data-tab="market" class="active">Market Intel</a>
+<a data-tab="promos">Promos</a>
 <a data-tab="library">Library</a>
 </nav>
 <main>
-<section id="promos" class="panel show">
+<section id="market" class="panel show">
+<h2>Market Intel</h2>
+<p class="sub">Your Market Intel library. Pick your poison below.</p>
+<div class="grid" id="market-grid">
+<a class="card" href="Competitive_Dashboard.html">
+<h3>Competitive Dashboard</h3>
+<p>Live competitive intelligence and pricing comparison.</p>
+</a>
+</div>
+</section>
+<section id="promos" class="panel">
 <h2>Promos</h2>
 <p class="sub">Current promotions and campaign materials.</p>
 <div class="grid" id="promos-grid">
@@ -70,4 +80,3 @@ document.getElementById(tab).classList.add('show');
 </script>
 </body>
 </html>
-<!-- redeploy v2 -->
