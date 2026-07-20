@@ -24,14 +24,10 @@ main{max-width:1000px;margin:0 auto;padding:30px 20px 60px;}
 .tag{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#fff;color:var(--gray);border:2px solid var(--line);cursor:pointer;transition:all .15s ease;}
 .tag:hover{border-color:var(--cos-red);color:var(--cos-red);}
 .tag.active{background:var(--cos-red);color:#fff;border-color:var(--cos-red);}
-.tag-clear{padding:7px 14px;border-radius:20px;font-size:.85rem;font-weight:600;background:#eee;color:var(--gray);border:2px solid transparent;cursor:pointer;}
-.tag-clear:hover{background:#e0e0e0;}
 .panel{display:none;}
 .panel.show{display:block;}
-body.filtering .panel{display:block;}
 .panel h2{font-size:1.5rem;margin-bottom:6px;}
 .panel .sub{color:var(--gray);margin-bottom:22px;font-size:.95rem;}
-body.filtering .panel .sub{display:none;}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));}
 .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;text-decoration:none;color:inherit;display:block;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;}
 .card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.08);border-color:var(--cos-red);}
@@ -42,7 +38,6 @@ body.filtering .panel .sub{display:none;}
 .card-tag{font-size:.72rem;font-weight:600;color:#8a8a8a;background:#f0f0f0;padding:2px 8px;border-radius:10px;}
 .empty{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:50px 20px;text-align:center;color:var(--gray);}
 .no-results{display:none;background:#fff;border:2px dashed var(--line);border-radius:12px;padding:40px 20px;text-align:center;color:var(--gray);margin-top:10px;}
-.section-hidden{display:none !important;}
 footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;border-top:1px solid var(--line);}
 @media (max-width:600px){header{gap:14px;padding:14px 20px;}header img{width:100%;max-width:280px;}.hub{font-size:1.5rem;}}
 </style>
@@ -58,44 +53,55 @@ footer{text-align:center;color:var(--gray);font-size:.8rem;padding:26px 20px;bor
 <a data-tab="library">Library</a>
 </nav>
 <main>
-<div class="search-wrap">
-<input type="text" id="search" class="search-box" placeholder="Search or tag (e.g. #mighty, #cos, #lube, #parts)&hellip;" autocomplete="off">
-<div class="tag-row" id="tag-row"></div>
-</div>
-<div class="no-results" id="no-results">No matches. Try a different tag or search term.</div>
 <section id="market" class="panel show">
 <h2>Marketing</h2>
 <p class="sub">Marketing materials and resources.</p>
-<div class="grid" id="market-grid">
-<a class="card" href="Competitive_Dashboard.html" data-tags="#cos #lube #parts #intel #pricing">
+<div class="grid">
+<a class="card" href="Competitive_Dashboard.html">
 <h3>Competitive Dashboard</h3>
 <p>Live competitive intelligence and pricing comparison.</p>
-<div class="card-tags"><span class="card-tag">#cos</span><span class="card-tag">#lube</span><span class="card-tag">#parts</span><span class="card-tag">#intel</span></div>
 </a>
 </div>
 </section>
 <section id="promos" class="panel">
 <h2>Promos</h2>
 <p class="sub">Current promotions and campaign materials.</p>
-<div class="grid" id="promos-grid">
-<a class="card" href="July August Mighty Triple Play.pdf" data-tags="#mighty #parts #promo">
+<div class="grid">
+<a class="card" href="July August Mighty Triple Play.pdf">
 <h3>Mighty Triple Play (July&ndash;August)</h3>
 <p>July&ndash;August Mighty Triple Play promotion flyer.</p>
-<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#promo</span></div>
 </a>
-<a class="card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="#mighty #parts #tools #promo">
+<a class="card" href="Q3 ToolWeb Flyer (1).pdf">
 <h3>Q3 ToolWeb Flyer</h3>
 <p>Q3 ToolWeb promotional flyer.</p>
-<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#tools</span><span class="card-tag">#promo</span></div>
 </a>
 </div>
 </section>
 <section id="library" class="panel">
 <h2>Library</h2>
-<p class="sub">SOPs, guides, and reference materials.</p>
-<div class="grid" id="library-grid">
-<div class="empty">Nothing here yet. Content coming soon.</div>
+<p class="sub">Search everything across Marketing and Promos by keyword or tag.</p>
+<div class="search-wrap">
+<input type="text" id="search" class="search-box" placeholder="Search or tag (e.g. #mighty, #cos, #lube, #parts)&hellip;" autocomplete="off">
+<div class="tag-row" id="tag-row"></div>
 </div>
+<div class="grid" id="library-grid">
+<a class="card lib-card" href="Competitive_Dashboard.html" data-tags="#cos #lube #parts #intel #pricing #marketing">
+<h3>Competitive Dashboard</h3>
+<p>Live competitive intelligence and pricing comparison.</p>
+<div class="card-tags"><span class="card-tag">#cos</span><span class="card-tag">#lube</span><span class="card-tag">#parts</span><span class="card-tag">#intel</span></div>
+</a>
+<a class="card lib-card" href="July August Mighty Triple Play.pdf" data-tags="#mighty #parts #promo">
+<h3>Mighty Triple Play (July&ndash;August)</h3>
+<p>July&ndash;August Mighty Triple Play promotion flyer.</p>
+<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#promo</span></div>
+</a>
+<a class="card lib-card" href="Q3 ToolWeb Flyer (1).pdf" data-tags="#mighty #parts #tools #promo">
+<h3>Q3 ToolWeb Flyer</h3>
+<p>Q3 ToolWeb promotional flyer.</p>
+<div class="card-tags"><span class="card-tag">#mighty</span><span class="card-tag">#parts</span><span class="card-tag">#tools</span><span class="card-tag">#promo</span></div>
+</a>
+</div>
+<div class="no-results" id="no-results">No matches. Try a different tag or search term.</div>
 </section>
 </main>
 <footer>Central Oil & Supply &middot; Internal use only &middot; Proprietary</footer>
@@ -111,7 +117,7 @@ document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("show
 document.getElementById(tab).classList.add("show");
 });
 });
-var cards=Array.prototype.slice.call(document.querySelectorAll(".card"));
+var cards=Array.prototype.slice.call(document.querySelectorAll(".lib-card"));
 var tagSet={};
 cards.forEach(function(c){(c.getAttribute("data-tags")||"").split(/\s+/).forEach(function(t){if(t){tagSet[t.toLowerCase()]=true;}});});
 var allTags=Object.keys(tagSet).sort();
@@ -133,8 +139,6 @@ var noResults=document.getElementById("no-results");
 function applyFilter(){
 var q=searchInput.value.trim().toLowerCase();
 var tagKeys=Object.keys(activeTags);
-var filtering=(q.length>0)||(tagKeys.length>0);
-document.body.classList.toggle("filtering",filtering);
 var anyVisible=false;
 cards.forEach(function(c){
 var tagsStr=(c.getAttribute("data-tags")||"").toLowerCase();
@@ -145,12 +149,7 @@ var show=matchText&&matchTags;
 c.classList.toggle("hide",!show);
 if(show){anyVisible=true;}
 });
-document.querySelectorAll("main section.panel").forEach(function(sec){
-if(!filtering){sec.classList.remove("section-hidden");return;}
-var vis=sec.querySelectorAll(".card:not(.hide)").length;
-sec.classList.toggle("section-hidden",vis===0);
-});
-noResults.style.display=(filtering&&!anyVisible)?"block":"none";
+noResults.style.display=anyVisible?"none":"block";
 }
 </script>
 </body>
