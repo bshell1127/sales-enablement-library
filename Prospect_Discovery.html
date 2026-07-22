@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Field Capture — COS</title><style>
+:root{
+--navy:#1F3864; --navy-soft:#2b4a80; --ink:#1a1a1a; --muted:#5c6470;
+--line:#e2e6ec; --bg:#f4f6f9; --card:#fff; --sel:#eaf0fb; --sel-border:#1F3864;
+--red:#c0392b; --ok:#1e7d4f;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:Calibri,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.4;}
+.wrap{max-width:640px;margin:0 auto;padding:0 16px 64px;}
+header{background:var(--navy);color:#fff;padding:18px 16px 16px;}
+header .hwrap{max-width:640px;margin:0 auto;}
+header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.3px;}
+header .sub{margin:2px 0 0;font-size:14px;color:#c3cde0;}
+.progress{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px 0;}
+.bar{flex:1;height:6px;background:var(--line);border-radius:999px;overflow:hidden;}
+.bar > span{display:block;height:100%;background:var(--navy);width:0;transition:width .25s ease;}
+.stepnum{font-size:13px;color:var(--muted);white-space:nowrap;font-weight:600;}
+.step{display:none;padding-top:14px;}
+.step.active{display:block;animation:fade .2s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 16px 18px;margin-bottom:14px;}
+.qlabel{font-weight:700;font-size:16px;margin:0 0 4px;}
+.qhint{font-size:13px;color:var(--muted);margin:0 0 12px;}
+.steptitle{font-size:14px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin:2px 0 14px;}
+.opts{display:flex;flex-wrap:wrap;gap:8px;}
+.opt{flex:1 1 auto;min-width:84px;text-align:center;border:1.5px solid var(--line);background:#fff;color:var(--ink);
+border-radius:10px;padding:12px 10px;font-size:15px;font-weight:600;cursor:pointer;transition:.12s;-webkit-tap-highlight-color:transparent;}
+.opt:hover{border-color:var(--navy-soft);}
+.opt.sel{background:var(--sel);border-color:var(--sel-border);color:var(--navy);box-shadow:inset 0 0 0 1px var(--sel-border);}
+.opt.wide{flex-basis:100%;text-align:left;}
+.sectors{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sector{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:18px 12px;font-size:16px;font-weight:700;
+color:var(--navy);cursor:pointer;transition:.12s;text-align:left;display:flex;align-items:center;gap:10px;}
+.sector:hover{border-color:var(--navy);background:var(--sel);}
+.sector.full{grid-column:1 / -1;}
+.sector .code{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;
+background:var(--navy);color:#fff;font-size:15px;font-weight:800;flex:0 0 auto;}
+input[type=text],input[type=number],input[type=tel]{width:100%;border:1.5px solid var(--line);border-radius:10px;
+padding:12px;font-size:16px;font-family:inherit;color:var(--ink);}
+input:focus,.opt:focus-visible,.sector:focus-visible,button:focus-visible{outline:3px solid #a9c2f0;outline-offset:1px;}
+textarea{width:100%;min-height:96px;border:1.5px solid var(--line);border-radius:10px;padding:12px;font-size:16px;font-family:inherit;resize:vertical;color:var(--ink);}
+.nav{display:flex;gap:10px;margin-top:6px;}
+.btn{flex:1;border:none;border-radius:10px;padding:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s;}
+.btn.primary{background:var(--navy);color:#fff;}
+.btn.primary:hover{background:var(--navy-soft);}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--line);flex:0 0 96px;}
+.btn.ghost:hover{border-color:var(--navy);}
+.summary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;}
+.summary h3{margin:0 0 10px;color:var(--navy);font-size:16px;}
+.srow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px;}
+.srow:last-child{border-bottom:none;}
+.srow .k{color:var(--muted);}
+.srow .v{font-weight:700;text-align:right;}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ok);color:#fff;padding:12px 20px;
+border-radius:999px;font-weight:700;font-size:15px;opacity:0;pointer-events:none;transition:.2s;}
+.toast.show{opacity:1;}
+.lead{font-size:14px;color:var(--muted);margin:0 0 10px;}</style></head><body><header>
+<div class="hwrap">
+<h1>Discovery Sheet</h1>
+<p class="sub">Central Oil &amp; Supply</p>
+</div></header><div class="progress">
+<div class="bar"><span id="barfill"></span></div>
+<div class="stepnum" id="stepnum"></div></div><div class="wrap"><div id="steps"></div></div><div class="toast" id="toast">Copied</div>
+<script>
+/* =============================================================
+   EDIT HERE — everything is driven by this config.
+   type: "single" pick one | "multi" pick any | "number" | "text"
+   Don't touch the id:, commas, or brackets [ ] { }.
+   Each sector has:
+     specifics: questions shown ONLY for that sector (step 2)
+     common: which shared questions to show after (step 3), by id, in order.
+     Remove an id to drop that question for that sector.
+   ============================================================= */
+
+// The full product arsenal — shown to every sector.
+const PRODUCTS = ["Oil","Chemicals","DEF","Filtration","Brakes","Batteries","Environmental",
+"Wiper blades","Drain plugs","Floor mats","Windshield service","Tire rotation","Janitorial supplies"];
+
+// Shared questions, defined once. Sectors pull these in by id.
+const COMMON = {
+  products:{id:"products", label:"Products they buy", hint:"Pick all that apply", type:"multi", options:PRODUCTS},
+  vendorcount:{id:"vendorcount", label:"Vendors total (everything they buy)", type:"single", options:["1","2","3","4","5","6+"]},
+  incentive:{id:"incentive", label:"How they incentivize their technicians", hint:"Pick all that apply", type:"multi", options:["None","Spiffs","Commission","Bonus","Other"]},
+  programs:{id:"programs", label:"Vendor programs that help incentivize techs / pull product through?", type:"single", options:["Yes","No","Not sure"]},
+  pain:{id:"pain", label:"Biggest pain right now", hint:"Pick ONE — the key one", type:"single", options:["Price","Supply reliability","Service","Too many vendors","Product performance",
+"Continuous overstock (no obsolescence protection)"]},
+};
+
+const OIL_BRANDS = ["Shell","Pennzoil","Valvoline","Mobil","Castrol","House brand"];
+const ENGINES = ["Cat","Cummins","Deere","Perkins","Kubota","Detroit","Case","International","Other"];
+
+const SECTORS = [
+  {code:"Q", label:"Quick Lube", specifics:[
+    {id:"cars", label:"Cars per week", type:"single", options:["0–20","21–40","41–50","51+"]},
+    {id:"bays", label:"Number of bays", type:"number"},
+    {id:"oilbrand", label:"Main oil brand now", type:"single", options:OIL_BRANDS},
+  ], common:["products","vendorcount","incentive","programs","pain"]},
+  {code:"U", label:"Under Car", specifics:[
+    {id:"cars", label:"Cars per week", type:"single", options:["0–20","21–40","41–50","51+"]},
+    {id:"bays", label:"Number of bays", type:"number"},
+    {id:"packsize", label:"Unit of measure / pack size", type:"single", options:["Drum","Bag in box","Bulk"]},
+    {id:"brakesource", label:"Where do you buy brakes?", type:"text"},
+  ], common:["products","vendorcount","incentive","programs","pain"]},
+  {code:"F", label:"Fleet or Municipality", specifics:[
+    {id:"vehicles", label:"Vehicle count", type:"single", options:["<25","25–100","100–250","250+"]},
+    {id:"duty", label:"Duty mix", hint:"Pick all that apply", type:"multi", options:["Light","Medium","Heavy"]},
+    {id:"service", label:"Service", type:"single", options:["In-house","Outsourced","Both"]},
+  ], common:["products","vendorcount","incentive","programs","pain"]},
+  {code:"C", label:"Construction", specifics:[
+    {id:"equipment", label:"Equipment count", type:"single", options:["<10","10–25","25–75","75+"]},
+    {id:"engines", label:"Engine makes", hint:"Pick all that apply", type:"multi", options:ENGINES},
+    {id:"service", label:"How it's serviced", type:"single", options:["In-house","Outsourced","Both"]},
+  ], common:["products","vendorcount","programs","pain"]}, // no incentive
+  {code:"A", label:"Agriculture", specifics:[
+    {id:"equipment", label:"Equipment count", type:"single", options:["5–10","10–15","15–20","20–30","30+"]},
+    {id:"engines", label:"Engine makes", hint:"Pick all that apply", type:"multi", options:ENGINES},
+    {id:"peak", label:"Seasonal peak", hint:"Pick all that apply", type:"multi", options:["Q1","Q2","Q3","Q4"]},
+  ], common:["products","vendorcount","pain"]}, // no incentive, no programs
+  {code:"G", label:"General", specifics:[], common:["products","vendorcount","incentive","programs","pain"]},
+];
+/* ============ engine — no need to edit below ============ */
+const state = {sector:null, sectorCode:null, answers:{}, division:"", customerName:"", customerContact:"", customerPhone:"", rep:"", date:new Date().toISOString().slice(0,10)};
+let stepIndex = 0, stepDefs = [];
+const stepsEl = document.getElementById('steps');
+function getSector(){ return SECTORS.find(s=>s.code===state.sectorCode) || null; }
+function specifics(){ const s=getSector(); return s?(s.specifics||[]):[]; }
+function commons(){ const s=getSector(); return s?(s.common||[]).map(id=>COMMON[id]).filter(Boolean):[]; }
+function buildStepDefs(){
+  stepDefs = [
+    {kind:'start'},
+    {kind:'branch'},
+    {kind:'questions', title:'A few basics'},
+    {kind:'notes'},
+    {kind:'summary'},
+  ];
+}
+const total = () => stepDefs.length;
+function render(){
+  const def = stepDefs[stepIndex];
+  stepsEl.innerHTML='';
+  const step=document.createElement('div'); step.className='step active';
+  if(def.kind==='start') step.appendChild(renderStart());
+  else if(def.kind==='branch') step.appendChild(renderBranch());
+  else if(def.kind==='questions') step.appendChild(renderQuestions(def.title, commons()));
+  else if(def.kind==='notes') step.appendChild(renderNotes());
+  else if(def.kind==='summary') step.appendChild(renderSummary());
+  if(def.kind!=='start' && def.kind!=='summary') step.appendChild(renderNav());
+  stepsEl.appendChild(step);
+  document.getElementById('barfill').style.width = (stepIndex/(total()-1)*100)+'%';
+  document.getElementById('stepnum').textContent = 'Step '+(stepIndex+1)+' of '+total();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function field(labelText, key, type){
+  const c=document.createElement('div'); c.className='qcard';
+  const l=document.createElement('p'); l.className='qlabel'; l.textContent=labelText; c.appendChild(l);
+  const i=document.createElement('input'); i.type=type||'text'; i.value=state[key]||''; i.oninput=e=>state[key]=e.target.value; c.appendChild(i);
+  return c;
+}
+function renderStart(){
+  const box=document.createElement('div');
+  box.appendChild(field('Customer name','customerName'));
+  box.appendChild(field('Customer contact','customerContact'));
+  box.appendChild(field('Customer phone','customerPhone','tel'));
+  box.appendChild(field('Rep','rep'));
+  const dcard=document.createElement('div'); dcard.className='qcard'; dcard.innerHTML='<p class="qlabel">Division</p>';
+  const dopts=document.createElement('div'); dopts.className='opts';
+  ["North","South"].forEach(d=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=d;
+    if(state.division===d)b.classList.add('sel');
+    b.onclick=()=>{state.division=d; render();};
+    dopts.appendChild(b);
+  });
+  dcard.appendChild(dopts); box.appendChild(dcard);
+  const st=document.createElement('p'); st.className='steptitle'; st.style.marginTop='18px'; st.textContent='Start here — what are they?'; box.appendChild(st);
+  const grid=document.createElement('div'); grid.className='sectors';
+  SECTORS.forEach((s,i)=>{
+    const b=document.createElement('button'); b.className='sector'+(SECTORS.length%2===1 && i===SECTORS.length-1?' full':'');
+    b.innerHTML='<span class="code">'+s.code+'</span>'+s.label;
+    b.onclick=()=>{state.sector=s.label; state.sectorCode=s.code; stepIndex=1; render();};
+    grid.appendChild(b);
+  });
+  box.appendChild(grid); return box;
+}
+function renderQuestions(title, qs){
+  const box=document.createElement('div');
+  if(title) box.innerHTML='<p class="steptitle">'+title+'</p>';
+  qs.forEach(q=>box.appendChild(renderQ(q)));
+  return box;
+}
+function renderBranch(){
+  const qs = specifics();
+  const box=document.createElement('div');
+  box.innerHTML='<p class="steptitle">'+state.sector+' — specifics</p>';
+  if(qs.length===0){
+    const p=document.createElement('p'); p.className='lead'; p.textContent='No sector-specific questions for this one. Tap Next.'; box.appendChild(p);
+  } else qs.forEach(q=>box.appendChild(renderQ(q)));
+  return box;
+}
+function renderQ(q){
+  const card=document.createElement('div'); card.className='qcard';
+  const lbl=document.createElement('p'); lbl.className='qlabel'; lbl.textContent=q.label; card.appendChild(lbl);
+  if(q.hint){const h=document.createElement('p');h.className='qhint';h.textContent=q.hint;card.appendChild(h);}
+  if(q.type==='single'||q.type==='multi'){
+    const opts=document.createElement('div'); opts.className='opts';
+    const wide=q.options.some(x=>x.length>16);
+    q.options.forEach(o=>{
+      const b=document.createElement('button'); b.className='opt'+(wide?' wide':''); b.textContent=o;
+      const cur=state.answers[q.id];
+      if(q.type==='single'&&cur===o)b.classList.add('sel');
+      if(q.type==='multi'&&Array.isArray(cur)&&cur.includes(o))b.classList.add('sel');
+      b.onclick=()=>{
+        if(q.type==='single')state.answers[q.id]=o;
+        else{let a=Array.isArray(state.answers[q.id])?state.answers[q.id]:[];
+          a.includes(o)?a=a.filter(x=>x!==o):a.push(o);state.answers[q.id]=a;}
+        render();
+      };
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+  } else {
+    const inp=document.createElement('input'); inp.type=q.type==='number'?'number':'text';
+    inp.value=state.answers[q.id]||''; inp.oninput=e=>state.answers[q.id]=e.target.value; card.appendChild(inp);
+  }
+  return card;
+}
+function renderNotes(){
+  const box=document.createElement('div'); box.innerHTML='<p class="steptitle">Notes</p>';
+  const c=document.createElement('div'); c.className='qcard';
+  c.innerHTML="<p class=\"qhint\">Anything the buttons didn't catch — decision maker, next step, relationship color.</p>";
+  const t=document.createElement('textarea'); t.value=state.answers._notes||''; t.oninput=e=>state.answers._notes=e.target.value; c.appendChild(t);
+  box.appendChild(c); return box;
+}
+function allFields(){
+  const l=[{id:'_customer',label:'Customer'},{id:'_contact',label:'Contact'},
+    {id:'_phone',label:'Phone'},{id:'_rep',label:'Rep'},{id:'_division',label:'Division'},{id:'_date',label:'Date'},
+    {id:'_code',label:'Sector code'},{id:'_sector',label:'Sector'}];
+  specifics().forEach(q=>l.push({id:q.id,label:q.label}));
+  commons().forEach(q=>l.push({id:q.id,label:q.label}));
+  l.push({id:'_notes',label:'Notes'});
+  return l;
+}
+function valFor(id){
+  const map={_customer:state.customerName,_contact:state.customerContact,_phone:state.customerPhone,
+    _rep:state.rep,_division:state.division,_date:state.date,_code:state.sectorCode,_sector:state.sector};
+  if(id in map) return map[id]||"";
+  const v=state.answers[id];
+  return Array.isArray(v)?v.join('; '):(v||'');
+}
+function renderSummary(){
+  const box=document.createElement('div'); box.innerHTML='<p class="steptitle">Review &amp; save</p>';
+  const s=document.createElement('div'); s.className='summary';
+  s.innerHTML='<h3>'+(state.customerName||'(no customer name)')+' &mdash; '+state.sector+' ('+state.sectorCode+')</h3>';
+  allFields().forEach(f=>{
+    if(f.id==='_sector'||f.id==='_code')return;
+    const row=document.createElement('div'); row.className='srow';
+    row.innerHTML='<span class="k">'+f.label+'</span><span class="v">'+(valFor(f.id)||'—')+'</span>';
+    s.appendChild(row);
+  });
+  box.appendChild(s);
+  const a1=document.createElement('div'); a1.className='nav'; a1.style.marginTop='14px';
+  const copy=document.createElement('button'); copy.className='btn primary'; copy.textContent='Copy summary'; copy.onclick=copySummary;
+  const csv=document.createElement('button'); csv.className='btn primary'; csv.textContent='Download row (.csv)'; csv.onclick=downloadCSV;
+  a1.appendChild(copy); a1.appendChild(csv); box.appendChild(a1);
+  const a2=document.createElement('div'); a2.className='nav';
+  const back=document.createElement('button'); back.className='btn ghost'; back.style.flex='1'; back.textContent='Back'; back.onclick=()=>{stepIndex--;render();};
+  const nw=document.createElement('button'); nw.className='btn ghost'; nw.style.flex='1'; nw.textContent='New sheet'; nw.onclick=()=>{if(confirm('Clear and start a new sheet?'))resetAll();};
+  a2.appendChild(back); a2.appendChild(nw); box.appendChild(a2);
+  return box;
+}
+function copySummary(){
+  let t='FIELD CAPTURE — '+(state.customerName||'(no name)')+'\n';
+  allFields().forEach(f=>{
+    if(f.id==='_code')return;
+    if(f.id==='_sector'){t+='Sector: '+state.sector+' ('+state.sectorCode+')\n';return;}
+    t+=f.label+': '+(valFor(f.id)||'—')+'\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>toast('Summary copied')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');ta.remove();toast('Summary copied');});
+}
+function downloadCSV(){
+  const f=allFields(), esc=v=>'"'+String(v||'').replace(/"/g,'""')+'"';
+  const head=f.map(x=>esc(x.label)).join(','), row=f.map(x=>esc(valFor(x.id))).join(',');
+  const blob=new Blob([head+'\n'+row],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=(state.customerName||'capture').replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'-'+state.date+'.csv';
+  document.body.appendChild(a);a.click();a.remove();toast("Row downloaded");
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+function renderNav(){
+  const nav=document.createElement('div'); nav.className='nav';
+  const back=document.createElement('button'); back.className='btn ghost'; back.textContent='Back'; back.onclick=()=>{stepIndex=Math.max(0,stepIndex-1);render();};
+  const next=document.createElement('button'); next.className='btn primary'; next.textContent='Next'; next.onclick=()=>{stepIndex++;render();};
+  nav.appendChild(back);nav.appendChild(next); return nav;
+}
+function resetAll(){
+  Object.assign(state,{sector:null,sectorCode:null,answers:{},division:"",customerName:"",customerContact:"",customerPhone:"",rep:"",
+    date:new Date().toISOString().slice(0,10)});
+  stepIndex=0; buildStepDefs(); render();
+}
+buildStepDefs(); render();
+</script></body></html>
